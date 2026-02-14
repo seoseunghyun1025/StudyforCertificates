@@ -153,3 +153,178 @@ Select col as name from table; - select col name from table;
         - 여기에서 먼저 sum을 생각하지 말고 col1 + col2 + col3을 먼저 생각한다면 행은 null + null + 1이기에 null이 반환되고 마지막 세번째 행도 마찬가지 그러므로 두번째 행의 2 + 3 + 2의 값인 7이 결과가 됨
     - select sum(col1) + sum(col2) + sum(col3)
         - 3 + 3 + 3 = 9 
+
+## 16. 그룹바이 group by
+- 집약기능을 가지고 있음(다수의 행을 하나로 합침)
+- Group by절에 온 컬럼만 select절에 올 수 있음
+
+## 17. join
+- natural join
+    - 반드시 두 테이블 간의 동일한 이름, 타입을 가진 컬럼이 필요하다.
+    - 조인에 이용되는 컬럼은 명시하지 않아도 자동으로 조인에 사용된다.
+    - 동일한 이름을 갖는 컬럼이 있지만 데이터 타입이 다르면 에러가 발생한다.
+    - 조인하는 테이블 간의 동일 컬럼이 select 절에 기술 되어도 테이블 이름을 생략해야 한다.
+    - select department_id 부서, department_name 부서이름, location_id 지역번호, city 도시
+        form department
+        natural join locations
+        where city = 'Seattle';
+    
+- Using
+    - using절은 조인에 사용될 컬럼을 지정한다.
+    - natural절과 using절은 함께 사용할 수 없다.
+    - 조인에 이용되지 않은 동일 이름을 가진 컬럼은 컬럼명 앞에 테이블명을 기술한다.
+    - 조인 컬럼은 괄호로 묶어서 기술해야 한다.
+    - select department_id 부서번호, d.departmane_name 부서, location_id 지역번호, city 도시
+        from departments.d
+        join locations using (location_id);
+    
+- left outer join
+    - from table a left outer join table b
+        on a.col = b.col
+    이것과 같은 오라클 sql 문법은
+    = from table a, table b
+        where a.col = b.col(+)
+
+- join 순서
+    - from a,b,c
+        a와 b가 join되고, 그리고 c와 join 된다.
+
+## 18. 서브쿼리
+- select: 스칼라서브쿼리
+- from: 인라인뷰(메인쿼리의 컬럼사용 가능)
+- where: 중첩서브쿼리
+- group by: 사용불가
+- having: 중첩서브쿼리
+- order by: 스칼라서브쿼리
+- in: 서브쿼리출력값들 or 조건
+- Any/some: 서브쿼리출력값들 중 가장 작거나 큰값과 비교
+- All: any/some과 반대개념
+- Exists: 서브쿼리 내 select절엔 뭐가 와도 상관없다. Row가 있으면 false
+
+## 19. 집합연산자
+- union: 정렬 O, 중복제거 O, 느리다
+- intersect: 정렬 O, 교집합, 느리다
+- Minus(except): 정렬 O, 차집합, 느리다
+- union all: 정렬 X, 중복제거 X, 빠르다
+
+## 20. DDL
+- truncate: drop & create, 테이블 내부구조는 남아있으나 데이터가 모두 삭제됨
+- drop: 테이블 자체가 없어짐 (당연히 데이터도 없음)
+- delete: 데이터만 삭제
+- rollback, commit과 항상 같이 나옴
+
+## 21. DML
+- insert: 데이터 넣는 명령: insert into 테이블(col1, col2, col3) values('11','22','33')
+    - values를 기준으로 좌우의 괄호 속 개수가 맞는지
+- update: 데이터의 특정 행 값을 변경(delete & insert)
+    - update 테이블 set col = '값' where col1 = '조건';
+- delete: 데이터의 특정 행을 삭제
+    - delete from 테이블 where col = '조건';
+- merge: 특정 데이터를 넣을 때 해당 테이블 키값을 기준으로 있으면 update, 없으면 insert를 한다.
+위 문제 모두 commit, rollback, savepoint와 주로 출제
+
+## 22. 제약조건
+- pk: not null + unique
+    - 테이블당 하나의 pk를 가질 수 있음(하나라는 게 컬럼이 아님, 복합키 가능)
+- not null: 해당 컬럼에 null이 올 수 없음
+- unique: 해당 컬럼에 중복값이 올 수 없음
+
+## 23. DCL
+- grant, revoke 문법
+    - grant 시스템 권한명[ 시스템 권한명... | 롤명] TO 유저명[. 유저명... | 롤명... | PUBLIC | [WITH ADMIN OPTION]];
+        - TO 유저
+    - revoke { 권한명[. 권한명...] ALL} on 객체명 from {유저명[. 유저명...] | 룰명(ROLE) | PUBLC } [CASCADE CONSTRAINTS];
+        - FROM 유저
+    - role은 객체
+
+## 24. VIEW
+- 독립성, 편의성, 보안성
+- sql을 저장하는 개념
+- 인덱싱하기 힘들다
+- insert update delete가 자유롭지 못하는 단점이 있음
+
+## 25. 그룹함수
+- roll up 
+    - 한쪽에 NULL만 있음
+- cube
+    - 조합 가능한 모든 경우의 수를 보여줌
+    - 모든 쪽에 NULL이 있음
+- groupingsets
+- grouping
+
+**원본테이블**
+|분류|내용|개수|금액| 
+|----|----|----|----| 
+|학용품|연필|1|400|
+|학용품|지우개|3|1200|
+|학용품|샤프|2|800|
+|음식|김밥|1|2000|
+|음식|제육덮밥|1|4800|
+|음식|제육덮밥|2|9600|
+|음식|게임|1|100|
+
+**ROLLUP**
+|분류|내용|개수|금액| 
+|----|----|----|----| 
+|기타|개임|1|100|
+|기타|NULL|1|100|
+|음식|김밥|1|2000|
+|음식|제육덮밥|3|14400|
+|음식|NULL|4|16400|
+|학용품|샤프|2|800|
+|학용품|연필|1|400|
+|학용품|지우개|3|1200|
+|학용품|NULL|6|2400|
+
+**CUBE**
+|분류|내용|개수|금액| 
+|----|----|----|----| 
+|기타|게임|1|100|
+|NULL|게임|1|100|
+|음식|김밥|1|2000|
+|NULL|김밥|1|2000|
+|학용품|샤프|2|800|
+|NULL|샤프|2|800|
+|학용품|연필|1|400|
+|NULL|연필|1|400|
+|음식|제육덮밥|3|14400|
+|NULL|제육덮밥|3|14400|
+|학용품|지우개|3|1200|
+|NULL|지우개|3|1200|
+|NULL|NULL|11|18900|
+|기타|NULL|1|100|
+|음식|NULL|4|16400|
+|학용품|NULL|6|2400|
+- ROLLUP
+    - (GROUP BY에 있는 컬럼들은 오른쪽에서 왼쪽순으로 그룹 생성)
+    - a, b로 묶이는 그룹의 값
+    - a로 묶이는 그룹의 소계
+    - 전체합계
+- CUBE
+    - (나올 수 있는 모든 경우의 수로 그룹 생성)
+    - a, b로 묶이는 그룹의 값
+    - a로 묶이는 그룹의 소계
+    - b로 묶이는 그룹의 소계
+    - 전체합계
+
+    - \*rollup(A,B) != rollup(B,A), cube(A,B) = cube(B,A)
+
+## 26. TCL
+- Commit, rollback
+    - auto commit, begin transaction(commit 기능 잠시 끄기) end
+
+## 27. 윈도우함수
+- rows between and 값이 증가한다.
+    - rows between unbounded precending and current row as "직업별 합계"
+        - 처음부터 지금까지의 어떤 값의 합계
+    - rows between 1 precending and 1 FOLLOWING as "위아래 합계"
+        - 내 앞의 값 1 내 뒤의 값 1
+- range between and 값이 동일하다
+    1. UNBOUNDED PRECENDING: 최종 출력될 값의 맨 처음 row의 값(Partition by 고려)
+    2. CURRENT ROW: 현재 row의 값
+    3. UNBOUNDED FOLLOWING: 최종 출력될 값의 맨 마지막 row의 값(partition by 고려)
+        - partition by란 파티션 안에서 처음이나 마지막 값임
+- rank 1, 1, 3, 4
+- dense_rank 1,1,2,3
+- partition by, order by
+    - row_number() over (partition by col1 order by col2)
