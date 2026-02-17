@@ -33,4 +33,48 @@
 	- select list에 서브쿼리가 사용될 수 있음
 	- where절에는 집계함수(sum, avg, max, min)가 올 수 없음
 
-3. 
+3. sql server에서 ''는 공백도 null아니다
+	- 오라클에서 ''는 null로 입력된다.
+
+4. group by와 having절
+	- 집계 함수의 통계 정보는 null값을 가진 행을 포함하여 수행할 수 없음
+		- null값은 집계함수에서 데이터 취급을 하지 않는다.
+	- group by 절에서는 select 절과 같이 alias 명을 사용할 수 없다.
+	- having 절은 무조건 group by 절 뒤에 위치한다.
+	- 집계 함수는 where 절에 올 수 없다.
+
+5. 실행 결과가 다른 하나 문제 푸는 법
+	- 먼저 select list를 보고 다른 게 있으면 소거
+	- 그다음 order by를 본다.
+	- order by에서 숫자는 select list에서의 순서를 숫자로 나타내는 것
+
+6. 실행 결과
+	- round(4.875, 2) = 4.88
+	- length('korean') = 6
+	- date_format('2024-11-02', '%Y-%m-%d') = 2024-11-02
+	- substr('south korea', 8, 4) = 'orea'
+		- 8번째부터 4개를 출력
+
+7. select colb
+    , max(cola) as cola1
+	, min(cola) as cola2
+	, sum(cola + colc) as sumac
+	from tab
+	group by colb 의 수행결과 보는 법
+	- 먼저 groub by colb를 보고 맨 앞에 colb가 나오는지 또 똑같은 값으로 묶었는지 확인
+	- 소거법을 하고 값이 다른 것을 찾아야 함
+
+8. GROUP BY 사용 시 ORDER BY에는 그룹 기준 컬럼을 쓰거나 집계 함수를 써야 하며, 일반 컬럼을 단독으로 쓰면 오류가 발생
+
+9. 오라클에서 from 절에 ,로 있고 where절이 없는 조인이면 카티션 곱(cross join)임
+
+## 2장
+1. 집합 연산자
+	- union: 합집합 중복제거 
+	- minus: 차집합
+	- intersect: 교집합
+	- except: 차집합
+
+2. union all, union
+	- union all: 양 테이블을 합침
+	- union: 중복 제거하고 출력
